@@ -1,16 +1,23 @@
 import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { saveUserProfile } from '@/utils/storage';
 
 export default function AgeScreen() {
     const { name } = useLocalSearchParams<{ name: string }>();
     const [age, setAge] = useState('');
 
-    const continueToApp = () => {
-        if (age.trim().length === 0) return;
+   const continueToApp = async () => {
+  if (age.trim().length === 0) return;
 
-        router.replace('/');
-    };
+  await saveUserProfile({
+    name: name?.trim() || '',
+    age: Number(age),
+  });
+
+  router.replace('/');
+};
+    
 
     return (
         <View style={styles.container}>
