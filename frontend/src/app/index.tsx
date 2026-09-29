@@ -89,7 +89,7 @@ export default function HomeScreen() {
               styles.actionCard,
               pressed && styles.pressed,
             ]}
-            onPress={showComingSoon}
+            onPress={() => router.push('/games')}
           >
             <Text style={styles.actionEmoji}>🎮</Text>
             <Text style={styles.actionTitle}>Games</Text>
