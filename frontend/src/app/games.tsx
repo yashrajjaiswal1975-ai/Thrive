@@ -31,7 +31,7 @@ export default function GamesScreen() {
                     styles.gameCard,
                     pressed && styles.pressed,
                 ]}
-                onPress={showComingSoon}
+                onPress={() => alert('Memory Match game coming soon! 🧩')}
             >
                 <Text style={styles.gameEmoji}>🧩</Text>
 
