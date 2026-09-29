@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Alert,
     Pressable,
@@ -8,8 +8,22 @@ import {
     Text,
     View,
 } from 'react-native';
+import { getUserProfile } from '@/utils/storage';
 
 export default function SettingsScreen() {
+    const [profile, setProfile] = useState<{
+        name: string;
+        age: number;
+    } | null>(null);
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            const savedProfile = await getUserProfile();
+            setProfile(savedProfile);
+        };
+
+        loadProfile();
+    }, []);
     const [notifications, setNotifications] = useState(true);
     const [dailyReminders, setDailyReminders] = useState(true);
 
@@ -78,7 +92,16 @@ export default function SettingsScreen() {
                     styles.card,
                     pressed && styles.pressed,
                 ]}
-                onPress={() => showComingSoon('Profile')}
+                onPress={() => {
+                    if (profile) {
+                        Alert.alert(
+                            'Your Profile',
+                            `Name: ${profile.name}\nAge: ${profile.age}`
+                        );
+                    } else {
+                        Alert.alert('Profile', 'No profile information found.');
+                    }
+                }}
             >
                 <Text style={styles.itemTitle}>👤 Profile</Text>
 
