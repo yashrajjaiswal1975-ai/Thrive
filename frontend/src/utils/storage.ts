@@ -40,3 +40,46 @@ export async function clearUserProfile() {
         console.error('Failed to clear user profile:', error);
     }
 }
+
+const REMINDERS_KEY = '@thrive_reminders';
+
+export type Reminder = {
+    id: string;
+    title: string;
+    time: string;
+    completed: boolean;
+};
+
+export async function saveReminders(reminders: Reminder[]) {
+    try {
+        await AsyncStorage.setItem(
+            REMINDERS_KEY,
+            JSON.stringify(reminders)
+        );
+    } catch (error) {
+        console.error('Failed to save reminders:', error);
+    }
+}
+
+export async function getReminders(): Promise<Reminder[]> {
+    try {
+        const storedReminders = await AsyncStorage.getItem(REMINDERS_KEY);
+
+        if (!storedReminders) {
+            return [];
+        }
+
+        return JSON.parse(storedReminders) as Reminder[];
+    } catch (error) {
+        console.error('Failed to load reminders:', error);
+        return [];
+    }
+}
+
+export async function clearReminders() {
+    try {
+        await AsyncStorage.removeItem(REMINDERS_KEY);
+    } catch (error) {
+        console.error('Failed to clear reminders:', error);
+    }
+}

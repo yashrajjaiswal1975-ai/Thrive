@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getReminders, saveReminders } from '../utils/storage';
 import {
     StyleSheet,
     Text,
