@@ -1,20 +1,24 @@
-import { useEffect, useState } from 'react';
 import {
-    Alert,
-    Pressable,
-    ScrollView,
     StyleSheet,
-    Switch,
     Text,
     View,
+    Pressable,
+    ScrollView,
+    Alert,
 } from 'react-native';
-import { getUserProfile } from '@/utils/storage';
+import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+
+import {
+    getUserProfile,
+    logout,
+    type UserProfile,
+} from '@/utils/storage';
 
 export default function SettingsScreen() {
-    const [profile, setProfile] = useState<{
-        name: string;
-        age: number;
-    } | null>(null);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [dailyRemindersEnabled, setDailyRemindersEnabled] = useState(true);
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -24,141 +28,229 @@ export default function SettingsScreen() {
 
         loadProfile();
     }, []);
-    const [notifications, setNotifications] = useState(true);
-    const [dailyReminders, setDailyReminders] = useState(true);
 
-    const showComingSoon = (feature: string) => {
-        Alert.alert(feature, 'This feature will be available soon.');
+    const handleProfilePress = () => {
+        if (profile) {
+            Alert.alert(
+                'Your Profile',
+                `Name: ${profile.name}\nAge: ${profile.age}`,
+                [{ text: 'OK' }]
+            );
+        } else {
+            Alert.alert(
+                'Profile',
+                'No profile information found.',
+                [{ text: 'OK' }]
+            );
+        }
+    };
+
+    const handleLogout = () => {
+        Alert.alert(
+            'Log Out',
+            'Are you sure you want to log out?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Log Out',
+                    style: 'destructive',
+                    onPress: async () => {
+                        await logout();
+                        router.replace('/login');
+                    },
+                },
+            ]
+        );
     };
 
     return (
         <ScrollView
             style={styles.container}
-            contentContainerStyle={styles.content}
+            contentContainerStyle={styles.scrollContent}
         >
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.emoji}>⚙️</Text>
+            <View style={styles.content}>
 
-                <Text style={styles.title}>Settings</Text>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Pressable
+                        onPress={() => router.back()}
+                        style={styles.backButton}
+                    >
+                        <Text style={styles.backButtonText}>‹</Text>
+                    </Pressable>
 
-                <Text style={styles.subtitle}>
-                    Manage your THRIVE experience.
+                    <View>
+                        <Text style={styles.title}>
+                            Settings
+                        </Text>
+
+                        <Text style={styles.subtitle}>
+                            Manage your THRIVE experience
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Profile */}
+                <Text style={styles.sectionTitle}>
+                    Profile
                 </Text>
-            </View>
 
-            {/* Preferences */}
-            <Text style={styles.sectionTitle}>Preferences</Text>
+                <Pressable
+                    style={({ pressed }) => [
+                        styles.settingCard,
+                        pressed && styles.pressed,
+                    ]}
+                    onPress={handleProfilePress}
+                >
+                    <View style={styles.iconContainer}>
+                        <Text style={styles.icon}>👤</Text>
+                    </View>
 
-            <View style={styles.card}>
-                <View style={styles.row}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.itemTitle}>🔔 Notifications</Text>
+                    <View style={styles.settingContent}>
+                        <Text style={styles.settingTitle}>
+                            My Profile
+                        </Text>
 
-                        <Text style={styles.description}>
-                            Receive helpful app notifications.
+                        <Text style={styles.settingDescription}>
+                            {profile
+                                ? `${profile.name}, ${profile.age} years old`
+                                : 'View your saved profile'}
                         </Text>
                     </View>
 
-                    <Switch
-                        value={notifications}
-                        onValueChange={setNotifications}
-                    />
-                </View>
+                    <Text style={styles.arrow}>
+                        ›
+                    </Text>
+                </Pressable>
 
-                <View style={styles.divider} />
+                {/* Preferences */}
+                <Text style={styles.sectionTitle}>
+                    Preferences
+                </Text>
 
-                <View style={styles.row}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.itemTitle}>📅 Daily Reminders</Text>
-
-                        <Text style={styles.description}>
-                            Get reminders for your daily routine.
+                {/* Notifications */}
+                <View style={styles.settingCard}>
+                    <View style={styles.iconContainer}>
+                        <Text style={styles.icon}>
+                            🔔
                         </Text>
                     </View>
 
-                    <Switch
-                        value={dailyReminders}
-                        onValueChange={setDailyReminders}
-                    />
+                    <View style={styles.settingContent}>
+                        <Text style={styles.settingTitle}>
+                            Notifications
+                        </Text>
+
+                        <Text style={styles.settingDescription}>
+                            Receive helpful notifications
+                        </Text>
+                    </View>
+
+                    <Pressable
+                        onPress={() =>
+                            setNotificationsEnabled(
+                                !notificationsEnabled
+                            )
+                        }
+                        style={[
+                            styles.toggle,
+                            notificationsEnabled &&
+                            styles.toggleActive,
+                        ]}
+                    >
+                        <View
+                            style={[
+                                styles.toggleCircle,
+                                notificationsEnabled &&
+                                styles.toggleCircleActive,
+                            ]}
+                        />
+                    </Pressable>
                 </View>
+
+                {/* Daily Reminders */}
+                <View style={styles.settingCard}>
+                    <View style={styles.iconContainer}>
+                        <Text style={styles.icon}>
+                            ⏰
+                        </Text>
+                    </View>
+
+                    <View style={styles.settingContent}>
+                        <Text style={styles.settingTitle}>
+                            Daily Reminders
+                        </Text>
+
+                        <Text style={styles.settingDescription}>
+                            Get reminders for your daily activities
+                        </Text>
+                    </View>
+
+                    <Pressable
+                        onPress={() =>
+                            setDailyRemindersEnabled(
+                                !dailyRemindersEnabled
+                            )
+                        }
+                        style={[
+                            styles.toggle,
+                            dailyRemindersEnabled &&
+                            styles.toggleActive,
+                        ]}
+                    >
+                        <View
+                            style={[
+                                styles.toggleCircle,
+                                dailyRemindersEnabled &&
+                                styles.toggleCircleActive,
+                            ]}
+                        />
+                    </Pressable>
+                </View>
+
+                {/* Logout */}
+                <Pressable
+                    style={({ pressed }) => [
+                        styles.logoutButton,
+                        pressed && styles.pressed,
+                    ]}
+                    onPress={handleLogout}
+                >
+                    <Text style={styles.logoutButtonText}>
+                        Log Out
+                    </Text>
+                </Pressable>
+
+                {/* About */}
+                <Text style={styles.sectionTitle}>
+                    About
+                </Text>
+
+                <View style={styles.aboutCard}>
+                    <Text style={styles.aboutLogo}>
+                        THRIVE
+                    </Text>
+
+                    <Text style={styles.aboutText}>
+                        A cognitive wellness and memory assistance
+                        platform designed to support your daily
+                        mental well-being.
+                    </Text>
+
+                    <Text style={styles.version}>
+                        Version 1.0.0
+                    </Text>
+                </View>
+
+                {/* Footer */}
+                <Text style={styles.footerText}>
+                    Take care of your mind, one day at a time. 🌱
+                </Text>
+
             </View>
-
-            {/* Account */}
-            <Text style={styles.sectionTitle}>Account</Text>
-
-            <Pressable
-                style={({ pressed }) => [
-                    styles.card,
-                    pressed && styles.pressed,
-                ]}
-                onPress={() => {
-                    if (profile) {
-                        Alert.alert(
-                            'Your Profile',
-                            `Name: ${profile.name}\nAge: ${profile.age}`
-                        );
-                    } else {
-                        Alert.alert('Profile', 'No profile information found.');
-                    }
-                }}
-            >
-                <Text style={styles.itemTitle}>👤 Profile</Text>
-
-                <Text style={styles.description}>
-                    View and manage your personal information.
-                </Text>
-            </Pressable>
-
-            {/* App */}
-            <Text style={styles.sectionTitle}>App</Text>
-
-            <Pressable
-                style={({ pressed }) => [
-                    styles.card,
-                    pressed && styles.pressed,
-                ]}
-                onPress={() => showComingSoon('Language')}
-            >
-                <Text style={styles.itemTitle}>🌐 Language</Text>
-
-                <Text style={styles.description}>
-                    Choose your preferred language.
-                </Text>
-            </Pressable>
-
-            <Pressable
-                style={({ pressed }) => [
-                    styles.card,
-                    pressed && styles.pressed,
-                ]}
-                onPress={() => showComingSoon('Accessibility')}
-            >
-                <Text style={styles.itemTitle}>♿ Accessibility</Text>
-
-                <Text style={styles.description}>
-                    Adjust the app for easier and more comfortable use.
-                </Text>
-            </Pressable>
-
-            {/* About */}
-            <Text style={styles.sectionTitle}>About</Text>
-
-            <Pressable
-                style={({ pressed }) => [
-                    styles.card,
-                    pressed && styles.pressed,
-                ]}
-                onPress={() => showComingSoon('About THRIVE')}
-            >
-                <Text style={styles.itemTitle}>🌱 About THRIVE</Text>
-
-                <Text style={styles.description}>
-                    Learn more about the THRIVE platform.
-                </Text>
-            </Pressable>
-
-            <Text style={styles.version}>THRIVE • Frontend Preview</Text>
         </ScrollView>
     );
 }
@@ -166,102 +258,194 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F5ED',
+        backgroundColor: '#F7F4EC',
+    },
+
+    scrollContent: {
+        flexGrow: 1,
     },
 
     content: {
+        width: '100%',
+        maxWidth: 600,
+        alignSelf: 'center',
         padding: 24,
-        paddingBottom: 50,
+        paddingTop: 50,
+        paddingBottom: 40,
     },
 
     header: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: 35,
     },
 
-    emoji: {
-        fontSize: 54,
-        marginBottom: 10,
+    backButton: {
+        width: 42,
+        height: 42,
+        borderRadius: 12,
+        backgroundColor: '#FFFFFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 14,
+        borderWidth: 1,
+        borderColor: '#E0E5DF',
+    },
+
+    backButtonText: {
+        fontSize: 34,
+        lineHeight: 36,
+        color: '#3F6B57',
+        marginTop: -4,
     },
 
     title: {
-        fontSize: 32,
-        fontWeight: '800',
-        color: '#183B35',
+        fontSize: 30,
+        fontWeight: '700',
+        color: '#26352D',
     },
 
     subtitle: {
-        fontSize: 17,
-        color: '#58736D',
-        marginTop: 8,
-        textAlign: 'center',
+        fontSize: 15,
+        color: '#65736B',
+        marginTop: 4,
     },
 
     sectionTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: '#183B35',
-        marginBottom: 12,
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#26352D',
+        marginBottom: 14,
         marginTop: 10,
     },
 
-    card: {
+    settingCard: {
+        width: '100%',
+        minHeight: 78,
         backgroundColor: '#FFFFFF',
         borderRadius: 18,
-        padding: 20,
-        marginBottom: 14,
-        borderWidth: 1,
-        borderColor: '#E4E5DD',
-
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.08,
-        shadowRadius: 5,
-        elevation: 2,
-    },
-
-    row: {
+        padding: 16,
+        marginBottom: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: '#E0E5DF',
     },
 
-    textContainer: {
+    iconContainer: {
+        width: 46,
+        height: 46,
+        borderRadius: 14,
+        backgroundColor: '#E8EFE9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 14,
+    },
+
+    icon: {
+        fontSize: 24,
+    },
+
+    settingContent: {
         flex: 1,
-        paddingRight: 15,
     },
 
-    itemTitle: {
-        fontSize: 19,
+    settingTitle: {
+        fontSize: 17,
         fontWeight: '700',
-        color: '#183B35',
+        color: '#26352D',
+        marginBottom: 4,
     },
 
-    description: {
+    settingDescription: {
+        fontSize: 14,
+        color: '#65736B',
+        lineHeight: 20,
+    },
+
+    arrow: {
+        fontSize: 30,
+        color: '#9AA59E',
+        marginLeft: 10,
+    },
+
+    toggle: {
+        width: 48,
+        height: 28,
+        borderRadius: 20,
+        backgroundColor: '#D6DDD8',
+        padding: 3,
+        justifyContent: 'center',
+    },
+
+    toggleActive: {
+        backgroundColor: '#3F6B57',
+    },
+
+    toggleCircle: {
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        backgroundColor: '#FFFFFF',
+        alignSelf: 'flex-start',
+    },
+
+    toggleCircleActive: {
+        alignSelf: 'flex-end',
+    },
+
+    logoutButton: {
+        width: '100%',
+        paddingVertical: 16,
+        borderRadius: 14,
+        borderWidth: 2,
+        borderColor: '#C85C5C',
+        alignItems: 'center',
+        marginTop: 18,
+        marginBottom: 22,
+    },
+
+    logoutButtonText: {
+        color: '#C85C5C',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+
+    aboutCard: {
+        backgroundColor: '#E8EFE9',
+        borderRadius: 18,
+        padding: 22,
+    },
+
+    aboutLogo: {
+        fontSize: 22,
+        fontWeight: '800',
+        letterSpacing: 3,
+        color: '#3F6B57',
+        marginBottom: 10,
+    },
+
+    aboutText: {
         fontSize: 15,
-        lineHeight: 22,
-        color: '#617873',
-        marginTop: 6,
-    },
-
-    divider: {
-        height: 1,
-        backgroundColor: '#E7E8E2',
-        marginVertical: 18,
-    },
-
-    pressed: {
-        opacity: 0.7,
-        transform: [{ scale: 0.99 }],
+        lineHeight: 23,
+        color: '#65736B',
+        marginBottom: 12,
     },
 
     version: {
-        textAlign: 'center',
-        color: '#8A9A96',
         fontSize: 13,
-        marginTop: 20,
+        color: '#89958D',
+    },
+
+    footerText: {
+        textAlign: 'center',
+        fontSize: 14,
+        color: '#89958D',
+        marginTop: 22,
+    },
+
+    pressed: {
+        opacity: 0.8,
+        transform: [{ scale: 0.98 }],
     },
 });

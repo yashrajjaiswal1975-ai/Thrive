@@ -1,11 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const USER_PROFILE_KEY = '@thrive_user_profile';
+const AUTH_KEY = '@thrive_logged_in';
+const REMINDERS_KEY = '@thrive_reminders';
 
 export type UserProfile = {
     name: string;
     age: number;
 };
+
+export type Reminder = {
+    id: string;
+    title: string;
+    time: string;
+    completed: boolean;
+};
+
+// ==================== USER PROFILE ====================
 
 export async function saveUserProfile(profile: UserProfile) {
     try {
@@ -41,14 +52,7 @@ export async function clearUserProfile() {
     }
 }
 
-const REMINDERS_KEY = '@thrive_reminders';
-
-export type Reminder = {
-    id: string;
-    title: string;
-    time: string;
-    completed: boolean;
-};
+// ==================== REMINDERS ====================
 
 export async function saveReminders(reminders: Reminder[]) {
     try {
@@ -81,5 +85,33 @@ export async function clearReminders() {
         await AsyncStorage.removeItem(REMINDERS_KEY);
     } catch (error) {
         console.error('Failed to clear reminders:', error);
+    }
+}
+
+// ==================== AUTHENTICATION ====================
+
+export async function setLoggedIn() {
+    try {
+        await AsyncStorage.setItem(AUTH_KEY, 'true');
+    } catch (error) {
+        console.error('Failed to save login status:', error);
+    }
+}
+
+export async function isLoggedIn(): Promise<boolean> {
+    try {
+        const value = await AsyncStorage.getItem(AUTH_KEY);
+        return value === 'true';
+    } catch (error) {
+        console.error('Failed to check login status:', error);
+        return false;
+    }
+}
+
+export async function logout() {
+    try {
+        await AsyncStorage.removeItem(AUTH_KEY);
+    } catch (error) {
+        console.error('Failed to logout:', error);
     }
 }

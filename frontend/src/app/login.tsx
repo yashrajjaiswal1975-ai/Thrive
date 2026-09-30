@@ -1,34 +1,58 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+} from 'react-native';
 import { router } from 'expo-router';
+import { setLoggedIn } from '@/utils/storage';
 
 export default function LoginScreen() {
+  const handleLogin = async () => {
+    await setLoggedIn();
+    router.replace('/profile-name');
+  };
+
+  const handleSignUp = async () => {
+    await setLoggedIn();
+    router.replace('/profile-name');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
 
         <Text style={styles.logo}>THRIVE</Text>
 
-        <Text style={styles.title}>Welcome Back</Text>
-
-        <Text style={styles.subtitle}>
-          Log in to continue your journey with THRIVE.
+        <Text style={styles.title}>
+          Welcome to THRIVE
         </Text>
 
+        <Text style={styles.subtitle}>
+          Your personal companion for cognitive wellness,
+          daily reminders and mental exercises.
+        </Text>
+
+        {/* Login */}
         <Pressable
-          style={styles.primaryButton}
-          onPress={() => {
-            // Login functionality will be connected to the backend later.
-            router.push('/profile-name');
-          }}
+          style={({ pressed }) => [
+            styles.primaryButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={handleLogin}
         >
-          <Text style={styles.primaryButtonText}>Log In</Text>
+          <Text style={styles.primaryButtonText}>
+            Log In
+          </Text>
         </Pressable>
 
+        {/* Sign Up */}
         <Pressable
-          style={styles.secondaryButton}
-          onPress={() => {
-            router.push('/profile-name');
-          }}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            pressed && styles.pressed,
+          ]}
+          onPress={handleSignUp}
         >
           <Text style={styles.secondaryButtonText}>
             Create New Account
@@ -68,6 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#26352D',
     marginBottom: 14,
+    textAlign: 'center',
   },
 
   subtitle: {
@@ -106,5 +131,10 @@ const styles = StyleSheet.create({
     color: '#3F6B57',
     fontSize: 18,
     fontWeight: '700',
+  },
+
+  pressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
   },
 });

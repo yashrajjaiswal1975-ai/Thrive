@@ -7,25 +7,55 @@ import {
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
-import { getUserProfile } from '@/utils/storage';
+import {
+  getUserProfile,
+  isLoggedIn,
+} from '@/utils/storage';
 
 export default function HomeScreen() {
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProfile = async () => {
+    const checkUser = async () => {
+      const loggedIn = await isLoggedIn();
+
+      // User is not logged in → send to Login / Sign Up
+      if (!loggedIn) {
+        router.replace('/login');
+        return;
+      }
+
+      // User is logged in → load their profile
       const profile = await getUserProfile();
 
       if (profile?.name) {
         setName(profile.name);
       }
+
+      setLoading(false);
     };
 
-    loadProfile();
+    checkUser();
   }, []);
 
-  const showComingSoon = () => {
+  // Show loading screen while checking login status
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.logo}>THRIVE</Text>
 
+          <Text style={styles.loadingText}>
+            Loading...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const showComingSoon = () => {
+    // Feature will be connected later
   };
 
   return (
@@ -84,6 +114,7 @@ export default function HomeScreen() {
 
         <View style={styles.grid}>
 
+          {/* Games */}
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
@@ -92,12 +123,17 @@ export default function HomeScreen() {
             onPress={() => router.push('/games')}
           >
             <Text style={styles.actionEmoji}>🎮</Text>
-            <Text style={styles.actionTitle}>Games</Text>
+
+            <Text style={styles.actionTitle}>
+              Games
+            </Text>
+
             <Text style={styles.actionText}>
               Train your mind
             </Text>
           </Pressable>
 
+          {/* Reminders */}
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
@@ -106,12 +142,17 @@ export default function HomeScreen() {
             onPress={() => router.push('/reminders')}
           >
             <Text style={styles.actionEmoji}>🔔</Text>
-            <Text style={styles.actionTitle}>Reminders</Text>
+
+            <Text style={styles.actionTitle}>
+              Reminders
+            </Text>
+
             <Text style={styles.actionText}>
               Stay organized
             </Text>
           </Pressable>
 
+          {/* Progress */}
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
@@ -120,12 +161,17 @@ export default function HomeScreen() {
             onPress={showComingSoon}
           >
             <Text style={styles.actionEmoji}>📊</Text>
-            <Text style={styles.actionTitle}>Progress</Text>
+
+            <Text style={styles.actionTitle}>
+              Progress
+            </Text>
+
             <Text style={styles.actionText}>
               See your journey
             </Text>
           </Pressable>
 
+          {/* Settings */}
           <Pressable
             style={({ pressed }) => [
               styles.actionCard,
@@ -134,7 +180,11 @@ export default function HomeScreen() {
             onPress={() => router.push('/settings')}
           >
             <Text style={styles.actionEmoji}>⚙️</Text>
-            <Text style={styles.actionTitle}>Settings</Text>
+
+            <Text style={styles.actionTitle}>
+              Settings
+            </Text>
+
             <Text style={styles.actionText}>
               Manage your app
             </Text>
@@ -144,7 +194,9 @@ export default function HomeScreen() {
 
         {/* Daily encouragement */}
         <View style={styles.encouragement}>
-          <Text style={styles.encouragementEmoji}>🌱</Text>
+          <Text style={styles.encouragementEmoji}>
+            🌱
+          </Text>
 
           <View style={styles.encouragementContent}>
             <Text style={styles.encouragementTitle}>
@@ -170,6 +222,19 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+
+  loadingText: {
+    fontSize: 17,
+    color: '#65736B',
+    marginTop: 10,
   },
 
   content: {
