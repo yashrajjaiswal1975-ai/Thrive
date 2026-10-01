@@ -25,15 +25,16 @@ export default function ProfileNameScreen() {
           We'll use your name to personalize your THRIVE experience.
         </Text>
 
-        <TextInput
+              <TextInput
           style={styles.input}
           placeholder="Enter your name"
           placeholderTextColor="#8A958E"
           value={name}
           onChangeText={setName}
           autoCapitalize="words"
+          onSubmitEditing={continueToAge}
+          returnKeyType="done"
         />
-
         <Pressable
           style={[
             styles.button,
