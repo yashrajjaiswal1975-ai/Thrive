@@ -45,27 +45,10 @@ export default function SettingsScreen() {
         }
     };
 
-    const handleLogout = () => {
-        Alert.alert(
-            'Log Out',
-            'Are you sure you want to log out?',
-            [
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Log Out',
-                    style: 'destructive',
-                    onPress: async () => {
-                        await logout();
-                        router.replace('/login');
-                    },
-                },
-            ]
-        );
-    };
-
+        const handleLogout = async () => {
+            await logout();
+            router.replace('/login');
+        };
     return (
         <ScrollView
             style={styles.container}
