@@ -4,9 +4,12 @@ import {
   View,
   Pressable,
   ScrollView,
+  Image,
+  StatusBar,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
+
 import {
   getUserProfile,
   isLoggedIn,
@@ -20,13 +23,13 @@ export default function HomeScreen() {
     const checkUser = async () => {
       const loggedIn = await isLoggedIn();
 
-      // User is not logged in → send to Login / Sign Up
+      // Not logged in → Login
       if (!loggedIn) {
         router.replace('/login');
         return;
       }
 
-      // User is logged in → load their profile
+      // Get saved profile
       const profile = await getUserProfile();
 
       if (profile?.name) {
@@ -39,359 +42,438 @@ export default function HomeScreen() {
     checkUser();
   }, []);
 
-  // Show loading screen while checking login status
+  // Loading screen
   if (loading) {
     return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.logo}>THRIVE</Text>
+      <View style={styles.loadingContainer}>
+        <StatusBar barStyle="dark-content" />
 
-          <Text style={styles.loadingText}>
-            Loading...
-          </Text>
-        </View>
+        <Image
+          source={require('../../assets/images/thrive-logo.png')}
+          style={styles.loadingLogo}
+          resizeMode="contain"
+        />
+
+        <Text style={styles.loadingText}>
+          Loading...
+        </Text>
       </View>
     );
   }
 
-  const showComingSoon = () => {
-    // Feature will be connected later
+  const openProgress = () => {
+    // Progress page will be connected later
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
 
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.logo}>THRIVE</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
 
-            <Text style={styles.greeting}>
-              Hello{name ? `, ${name}` : ''}! 👋
-            </Text>
+        {/* ================= HEADER ================= */}
 
-            <Text style={styles.subtitle}>
-              Let's make today a great day.
-            </Text>
-          </View>
-        </View>
+        <View style={styles.hero}>
 
-        {/* Main Game Card */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.mainCard,
-            pressed && styles.pressed,
-          ]}
-          onPress={() => router.push('/games')}
-        >
-          <Text style={styles.cardEmoji}>🧠</Text>
-
-          <View style={styles.cardContent}>
-            <Text style={styles.mainCardTitle}>
-              Cognitive Games
-            </Text>
-
-            <Text style={styles.mainCardText}>
-              Exercise your memory, attention and thinking skills.
-            </Text>
-
-            <View style={styles.startButton}>
-              <Text style={styles.startButtonText}>
-                Play Games
-              </Text>
-            </View>
-          </View>
-        </Pressable>
-
-        {/* Quick Actions */}
-        <Text style={styles.sectionTitle}>
-          Quick Access
-        </Text>
-
-        <View style={styles.grid}>
-
-          {/* Games */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionCard,
-              pressed && styles.pressed,
-            ]}
-            onPress={() => router.push('/games')}
-          >
-            <Text style={styles.actionEmoji}>🎮</Text>
-
-            <Text style={styles.actionTitle}>
-              Games
-            </Text>
-
-            <Text style={styles.actionText}>
-              Train your mind
-            </Text>
-          </Pressable>
-
-          {/* Reminders */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionCard,
-              pressed && styles.pressed,
-            ]}
-            onPress={() => router.push('/reminders')}
-          >
-            <Text style={styles.actionEmoji}>🔔</Text>
-
-            <Text style={styles.actionTitle}>
-              Reminders
-            </Text>
-
-            <Text style={styles.actionText}>
-              Stay organized
-            </Text>
-          </Pressable>
-
-          {/* Progress */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionCard,
-              pressed && styles.pressed,
-            ]}
-            onPress={showComingSoon}
-          >
-            <Text style={styles.actionEmoji}>📊</Text>
-
-            <Text style={styles.actionTitle}>
-              Progress
-            </Text>
-
-            <Text style={styles.actionText}>
-              See your journey
-            </Text>
-          </Pressable>
+          {/* THRIVE */}
+          <Text style={styles.logoText}>
+            THRIVE
+          </Text>
 
           {/* Settings */}
           <Pressable
             style={({ pressed }) => [
-              styles.actionCard,
-              pressed && styles.pressed,
+              styles.settingsButton,
+              pressed && styles.pressedSmall,
             ]}
             onPress={() => router.push('/settings')}
           >
-            <Text style={styles.actionEmoji}>⚙️</Text>
-
-            <Text style={styles.actionTitle}>
-              Settings
-            </Text>
-
-            <Text style={styles.actionText}>
-              Manage your app
+            <Text style={styles.settingsIcon}>
+              ⚙
             </Text>
           </Pressable>
 
-        </View>
-
-        {/* Daily encouragement */}
-        <View style={styles.encouragement}>
-          <Text style={styles.encouragementEmoji}>
-            🌱
+          {/* Greeting */}
+          <Text style={styles.greeting}>
+            Hello, {name || 'user name'}! 👋
           </Text>
 
-          <View style={styles.encouragementContent}>
-            <Text style={styles.encouragementTitle}>
-              Keep going!
-            </Text>
+          {/* Logo */}
+          <Image
+            source={require('../../assets/images/thrive-logo.png')}
+            style={styles.heroLogo}
+            resizeMode="contain"
+          />
 
-            <Text style={styles.encouragementText}>
-              A little practice every day can make a difference.
-            </Text>
-          </View>
+          {/* Main heading */}
+          <Text style={styles.heroTitle}>
+            Your cognitive{'\n'}
+            wellness companion
+          </Text>
+
+          <Text style={styles.heroSubtitle}>
+            What would you like to do today?
+          </Text>
+
         </View>
 
-      </View>
-    </ScrollView>
+
+        {/* ================= MENU ================= */}
+
+        <View style={styles.menuContainer}>
+
+          {/* Cognitive Games */}
+          <MenuButton
+            icon="🧠"
+            title="Cognitive Games"
+            subtitle="Train your memory and focus"
+            onPress={() => router.push('/games')}
+          />
+
+          {/* Reminders */}
+          <MenuButton
+            icon="🔔"
+            title="Reminders"
+            subtitle="Keep track of your daily tasks"
+            onPress={() => router.push('/reminders')}
+          />
+
+          {/* Progress */}
+          <MenuButton
+            icon="📊"
+            title="My Progress"
+            subtitle="See your THRIVE journey"
+            onPress={openProgress}
+          />
+
+          {/* Settings */}
+          <MenuButton
+            icon="⚙️"
+            title="Settings"
+            subtitle="Manage your THRIVE experience"
+            onPress={() => router.push('/settings')}
+          />
+
+        </View>
+
+      </ScrollView>
+    </View>
   );
 }
 
+
+/* ================================================= */
+/*                  MENU BUTTON                      */
+/* ================================================= */
+
+type MenuButtonProps = {
+  icon: string;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+};
+
+function MenuButton({
+  icon,
+  title,
+  subtitle,
+  onPress,
+}: MenuButtonProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.menuButton,
+        pressed && styles.pressed,
+      ]}
+    >
+
+      {/* Icon circle */}
+      <View style={styles.iconCircle}>
+        <Text style={styles.menuIcon}>
+          {icon}
+        </Text>
+      </View>
+
+      {/* Text */}
+      <View style={styles.menuTextContainer}>
+        <Text style={styles.menuTitle}>
+          {title}
+        </Text>
+
+        <Text style={styles.menuSubtitle}>
+          {subtitle}
+        </Text>
+      </View>
+
+      {/* Arrow */}
+      <Text style={styles.arrow}>
+        ›
+      </Text>
+
+    </Pressable>
+  );
+}
+
+
+/* ================================================= */
+/*                    STYLES                         */
+/* ================================================= */
+
 const styles = StyleSheet.create({
+
+  /* ---------- MAIN ---------- */
+
   container: {
     flex: 1,
-    backgroundColor: '#F7F4EC',
+    backgroundColor: '#F9F4EC',
   },
 
   scrollContent: {
-    flexGrow: 1,
+    paddingBottom: 30,
   },
 
-  loadingContainer: {
-    flex: 1,
+
+  /* ---------- HERO ---------- */
+
+  hero: {
+    marginHorizontal: 12,
+    marginTop: 12,
+    minHeight: 350,
+
+    backgroundColor: '#C5F0ED',
+
+    borderBottomLeftRadius: 70,
+    borderBottomRightRadius: 70,
+    borderTopLeftRadius: 70,
+    borderTopRightRadius: 70,
+
+    alignItems: 'center',
+
+    paddingTop: 26,
+    paddingBottom: 25,
+
+    position: 'relative',
+  },
+
+  logoText: {
+    fontSize: 43,
+    fontWeight: '800',
+    letterSpacing: 4,
+    color: '#073B4C',
+
+    marginBottom: 3,
+  },
+
+  settingsButton: {
+    position: 'absolute',
+
+    right: 18,
+    top: 18,
+
+    width: 44,
+    height: 44,
+
+    borderRadius: 22,
+
+    backgroundColor: '#A9DDD9',
+
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+
+    shadowColor: '#4A7775',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+
+    elevation: 3,
   },
 
-  loadingText: {
-    fontSize: 17,
-    color: '#65736B',
-    marginTop: 10,
-  },
-
-  content: {
-    width: '100%',
-    maxWidth: 600,
-    alignSelf: 'center',
-    padding: 24,
-    paddingTop: 55,
-    paddingBottom: 40,
-  },
-
-  header: {
-    marginBottom: 30,
-  },
-
-  logo: {
-    fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: 3,
-    color: '#3F6B57',
-    marginBottom: 18,
+  settingsIcon: {
+    fontSize: 23,
+    color: '#28636A',
   },
 
   greeting: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#26352D',
+    fontSize: 15,
+    fontWeight: '600',
+
+    color: '#073B4C',
+
     marginBottom: 8,
   },
 
-  subtitle: {
-    fontSize: 17,
-    color: '#65736B',
-    lineHeight: 25,
+  heroLogo: {
+    width: 125,
+    height: 125,
+
+    marginVertical: 3,
   },
 
-  mainCard: {
-    backgroundColor: '#3F6B57',
-    borderRadius: 22,
-    padding: 24,
-    marginBottom: 30,
+  heroTitle: {
+    textAlign: 'center',
+
+    fontSize: 21,
+    lineHeight: 23,
+
+    fontWeight: '800',
+
+    color: '#073B4C',
+
+    marginTop: 2,
+  },
+
+  heroSubtitle: {
+    fontSize: 14,
+
+    color: '#245763',
+
+    marginTop: 14,
+
+    fontWeight: '500',
+  },
+
+
+  /* ---------- MENU ---------- */
+
+  menuContainer: {
+    paddingHorizontal: 30,
+    paddingTop: 16,
+  },
+
+  menuButton: {
+    minHeight: 68,
+
+    backgroundColor: '#C3ECE9',
+
+    borderRadius: 34,
+
+    marginBottom: 9,
+
     flexDirection: 'row',
     alignItems: 'center',
+
+    paddingLeft: 9,
+    paddingRight: 15,
+
+    shadowColor: '#477A78',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.10,
+    shadowRadius: 4,
+
+    elevation: 2,
   },
 
-  cardEmoji: {
-    fontSize: 48,
-    marginRight: 18,
+  iconCircle: {
+    width: 54,
+    height: 54,
+
+    borderRadius: 27,
+
+    backgroundColor: '#FFFDF8',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    marginRight: 13,
   },
 
-  cardContent: {
+  menuIcon: {
+    fontSize: 27,
+  },
+
+  menuTextContainer: {
     flex: 1,
-  },
-
-  mainCardTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-
-  mainCardText: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#E8F0EB',
-    marginBottom: 18,
-  },
-
-  startButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-
-  startButtonText: {
-    color: '#3F6B57',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#26352D',
-    marginBottom: 16,
-  },
-
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 14,
-  },
-
-  actionCard: {
-    width: '48%',
-    minHeight: 145,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E0E5DF',
     justifyContent: 'center',
   },
 
-  actionEmoji: {
-    fontSize: 32,
-    marginBottom: 10,
+  menuTitle: {
+    fontSize: 15,
+
+    fontWeight: '800',
+
+    color: '#073B4C',
+
+    marginBottom: 2,
   },
 
-  actionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#26352D',
-    marginBottom: 5,
+  menuSubtitle: {
+    fontSize: 11,
+
+    color: '#35616A',
+
+    lineHeight: 15,
   },
 
-  actionText: {
-    fontSize: 14,
-    color: '#65736B',
+  arrow: {
+    fontSize: 34,
+
+    fontWeight: '300',
+
+    color: '#073B4C',
+
+    marginLeft: 8,
+
+    marginTop: -4,
   },
 
-  encouragement: {
-    marginTop: 28,
-    padding: 20,
-    borderRadius: 18,
-    backgroundColor: '#E8EFE9',
-    flexDirection: 'row',
+
+  /* ---------- PRESS ---------- */
+
+  pressed: {
+    opacity: 0.78,
+
+    transform: [
+      {
+        scale: 0.985,
+      },
+    ],
+  },
+
+  pressedSmall: {
+    opacity: 0.7,
+
+    transform: [
+      {
+        scale: 0.94,
+      },
+    ],
+  },
+
+
+  /* ---------- LOADING ---------- */
+
+  loadingContainer: {
+    flex: 1,
+
+    backgroundColor: '#F9F4EC',
+
+    justifyContent: 'center',
     alignItems: 'center',
   },
 
-  encouragementEmoji: {
-    fontSize: 32,
-    marginRight: 14,
+  loadingLogo: {
+    width: 100,
+    height: 100,
+
+    marginBottom: 15,
   },
 
-  encouragementContent: {
-    flex: 1,
+  loadingText: {
+    fontSize: 16,
+
+    color: '#35616A',
+
+    fontWeight: '500',
   },
 
-  encouragementTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#3F6B57',
-    marginBottom: 4,
-  },
-
-  encouragementText: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: '#65736B',
-  },
-
-  pressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
-  },
 });
