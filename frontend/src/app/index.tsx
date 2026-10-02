@@ -83,25 +83,12 @@ export default function HomeScreen() {
             THRIVE
           </Text>
 
-          {/* Settings */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsButton,
-              pressed && styles.pressedSmall,
-            ]}
-            onPress={() => router.push('/settings')}
-          >
-            <Text style={styles.settingsIcon}>
-              ⚙
-            </Text>
-          </Pressable>
-
           {/* Greeting */}
           <Text style={styles.greeting}>
             Hello, {name || 'user name'}! 👋
           </Text>
 
-          {/* Logo */}
+          {/* THRIVE LOGO */}
           <Image
             source={require('../../assets/images/thrive-logo.png')}
             style={styles.heroLogo}
@@ -114,6 +101,7 @@ export default function HomeScreen() {
             wellness companion
           </Text>
 
+          {/* Subtitle */}
           <Text style={styles.heroSubtitle}>
             What would you like to do today?
           </Text>
@@ -200,6 +188,7 @@ function MenuButton({
 
       {/* Text */}
       <View style={styles.menuTextContainer}>
+
         <Text style={styles.menuTitle}>
           {title}
         </Text>
@@ -207,6 +196,7 @@ function MenuButton({
         <Text style={styles.menuSubtitle}>
           {subtitle}
         </Text>
+
       </View>
 
       {/* Arrow */}
@@ -263,41 +253,10 @@ const styles = StyleSheet.create({
     fontSize: 43,
     fontWeight: '800',
     letterSpacing: 4,
+
     color: '#073B4C',
 
     marginBottom: 3,
-  },
-
-  settingsButton: {
-    position: 'absolute',
-
-    right: 18,
-    top: 18,
-
-    width: 44,
-    height: 44,
-
-    borderRadius: 22,
-
-    backgroundColor: '#A9DDD9',
-
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    shadowColor: '#4A7775',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-
-    elevation: 3,
-  },
-
-  settingsIcon: {
-    fontSize: 23,
-    color: '#28636A',
   },
 
   greeting: {
@@ -363,10 +322,12 @@ const styles = StyleSheet.create({
     paddingRight: 15,
 
     shadowColor: '#477A78',
+
     shadowOffset: {
       width: 0,
       height: 2,
     },
+
     shadowOpacity: 0.10,
     shadowRadius: 4,
 
@@ -393,6 +354,7 @@ const styles = StyleSheet.create({
 
   menuTextContainer: {
     flex: 1,
+
     justifyContent: 'center',
   },
 
@@ -435,16 +397,6 @@ const styles = StyleSheet.create({
     transform: [
       {
         scale: 0.985,
-      },
-    ],
-  },
-
-  pressedSmall: {
-    opacity: 0.7,
-
-    transform: [
-      {
-        scale: 0.94,
       },
     ],
   },
