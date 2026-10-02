@@ -6,40 +6,35 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 
-export default function ProfileNameScreen() {
-  const { username } = useLocalSearchParams<{
-    username?: string;
-  }>();
+export default function CreateUsernameScreen() {
+  const [username, setUsername] = useState('');
 
-  const [name, setName] = useState('');
+  const continueToName = () => {
+    const cleanUsername = username.trim().toLowerCase();
 
-  const continueToAge = () => {
-    const cleanName = name.trim();
-
-    if (!cleanName) {
+    if (!cleanUsername) {
       Alert.alert(
-        'Name Required',
-        'Please enter your name.'
+        'Username Required',
+        'Please enter a username.'
       );
       return;
     }
 
-    if (!username) {
+    if (cleanUsername.length < 3) {
       Alert.alert(
-        'Error',
-        'Username information is missing. Please start again.'
+        'Username Too Short',
+        'Username must contain at least 3 characters.'
       );
       return;
     }
 
     router.push({
-      pathname: '/age',
+      pathname: '/profile-name',
       params: {
-        username: username,
-        name: cleanName,
+        username: cleanUsername,
       },
     });
   };
@@ -53,33 +48,34 @@ export default function ProfileNameScreen() {
         </Text>
 
         <Text style={styles.title}>
-          What is your name?
+          Create your username
         </Text>
 
         <Text style={styles.subtitle}>
-          We'll use your name to personalize your THRIVE experience.
+          Choose a username you'll use to log in to THRIVE.
         </Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Enter your name"
+          placeholder="Enter username"
           placeholderTextColor="#8A958E"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
           autoCorrect={false}
-          onSubmitEditing={continueToAge}
+          maxLength={30}
+          onSubmitEditing={continueToName}
           returnKeyType="next"
         />
 
         <Pressable
           style={({ pressed }) => [
             styles.button,
-            !name.trim() && styles.buttonDisabled,
+            !username.trim() && styles.buttonDisabled,
             pressed && styles.buttonPressed,
           ]}
-          onPress={continueToAge}
-          disabled={!name.trim()}
+          onPress={continueToName}
+          disabled={!username.trim()}
         >
           <Text style={styles.buttonText}>
             Continue
@@ -127,8 +123,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700',
     color: '#26352D',
-    marginBottom: 14,
     textAlign: 'center',
+    marginBottom: 14,
   },
 
   subtitle: {

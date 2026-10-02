@@ -6,83 +6,76 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 
-export default function ProfileNameScreen() {
-  const { username } = useLocalSearchParams<{
-    username?: string;
-  }>();
+export default function LoginCredentialsScreen() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const [name, setName] = useState('');
+  const handleLogin = () => {
+    const cleanUsername = username.trim();
 
-  const continueToAge = () => {
-    const cleanName = name.trim();
-
-    if (!cleanName) {
+    if (!cleanUsername || !password) {
       Alert.alert(
-        'Name Required',
-        'Please enter your name.'
+        'Missing Information',
+        'Please enter your username and password.'
       );
       return;
     }
 
-    if (!username) {
-      Alert.alert(
-        'Error',
-        'Username information is missing. Please start again.'
-      );
-      return;
-    }
+    // Supabase login will be connected here next.
+    console.log('Login:', cleanUsername);
 
-    router.push({
-      pathname: '/age',
-      params: {
-        username: username,
-        name: cleanName,
-      },
-    });
+    Alert.alert(
+      'Login',
+      'Supabase login will be connected in the next step.'
+    );
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
 
-        <Text style={styles.logo}>
-          THRIVE
-        </Text>
+        <Text style={styles.logo}>THRIVE</Text>
 
         <Text style={styles.title}>
-          What is your name?
+          Log In
         </Text>
 
         <Text style={styles.subtitle}>
-          We'll use your name to personalize your THRIVE experience.
+          Enter your username and password to continue.
         </Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Enter your name"
+          placeholder="Username"
           placeholderTextColor="#8A958E"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
           autoCorrect={false}
-          onSubmitEditing={continueToAge}
-          returnKeyType="next"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#8A958E"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
         />
 
         <Pressable
           style={({ pressed }) => [
             styles.button,
-            !name.trim() && styles.buttonDisabled,
             pressed && styles.buttonPressed,
           ]}
-          onPress={continueToAge}
-          disabled={!name.trim()}
+          onPress={handleLogin}
         >
           <Text style={styles.buttonText}>
-            Continue
+            Log In
           </Text>
         </Pressable>
 
@@ -158,10 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: '#3F6B57',
     alignItems: 'center',
-  },
-
-  buttonDisabled: {
-    opacity: 0.45,
+    marginTop: 4,
   },
 
   buttonPressed: {
