@@ -8,14 +8,16 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { saveUserProfile } from '@/utils/storage';
 
 export default function AgeScreen() {
-  const { name } = useLocalSearchParams<{ name?: string }>();
+  const { username, name } = useLocalSearchParams<{
+    username?: string;
+    name?: string;
+  }>();
 
   const [age, setAge] = useState('');
 
-  const continueToApp = async () => {
+  const continueToPhoto = () => {
     const trimmedAge = age.trim();
     const numericAge = Number(trimmedAge);
 
@@ -35,12 +37,22 @@ export default function AgeScreen() {
       return;
     }
 
-    await saveUserProfile({
-      name: typeof name === 'string' ? name.trim() : '',
-      age: numericAge,
-    });
+    if (!username || !name) {
+      Alert.alert(
+        'Error',
+        'Profile information is missing. Please start again.'
+      );
+      return;
+    }
 
-    router.replace('/');
+    router.push({
+      pathname: '/profile-photo',
+      params: {
+        username,
+        name,
+        age: String(numericAge),
+      },
+    });
   };
 
   return (
@@ -67,6 +79,8 @@ export default function AgeScreen() {
           onChangeText={setAge}
           keyboardType="number-pad"
           maxLength={3}
+          onSubmitEditing={continueToPhoto}
+          returnKeyType="next"
         />
 
         <Pressable
@@ -75,11 +89,20 @@ export default function AgeScreen() {
             !age.trim() && styles.buttonDisabled,
             pressed && styles.buttonPressed,
           ]}
-          onPress={continueToApp}
+          onPress={continueToPhoto}
           disabled={!age.trim()}
         >
           <Text style={styles.buttonText}>
             Continue
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>
+            Back
           </Text>
         </Pressable>
 
@@ -161,5 +184,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '700',
+  },
+
+  backButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+  },
+
+  backButtonText: {
+    color: '#3F6B57',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

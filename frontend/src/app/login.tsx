@@ -5,17 +5,16 @@ import {
   Pressable,
 } from 'react-native';
 import { router } from 'expo-router';
-import { setLoggedIn } from '@/utils/storage';
 
 export default function LoginScreen() {
-  const handleLogin = async () => {
-    await setLoggedIn();
-    router.replace('/profile-name');
+  // LOGIN → username + password
+  const handleLogin = () => {
+    router.push('/login-credentials');
   };
 
-  const handleSignUp = async () => {
-    await setLoggedIn();
-    router.replace('/profile-name');
+  // CREATE ACCOUNT → username + password → name → age → photo
+  const handleSignUp = () => {
+    router.push('/create-username');
   };
 
   return (
@@ -33,7 +32,7 @@ export default function LoginScreen() {
           daily reminders and mental exercises.
         </Text>
 
-        {/* Login */}
+        {/* LOGIN */}
         <Pressable
           style={({ pressed }) => [
             styles.primaryButton,
@@ -46,7 +45,7 @@ export default function LoginScreen() {
           </Text>
         </Pressable>
 
-        {/* Sign Up */}
+        {/* CREATE ACCOUNT */}
         <Pressable
           style={({ pressed }) => [
             styles.secondaryButton,
