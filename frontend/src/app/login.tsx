@@ -7,12 +7,10 @@ import {
 import { router } from 'expo-router';
 
 export default function LoginScreen() {
-  // LOGIN → username + password
   const handleLogin = () => {
     router.push('/login-credentials');
   };
 
-  // CREATE ACCOUNT → username + password → name → age → photo
   const handleSignUp = () => {
     router.push('/create-username');
   };
@@ -21,7 +19,9 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <View style={styles.content}>
 
-        <Text style={styles.logo}>THRIVE</Text>
+        <Text style={styles.logo}>
+          THRIVE
+        </Text>
 
         <Text style={styles.title}>
           Welcome to THRIVE
@@ -32,7 +32,6 @@ export default function LoginScreen() {
           daily reminders and mental exercises.
         </Text>
 
-        {/* LOGIN */}
         <Pressable
           style={({ pressed }) => [
             styles.primaryButton,
@@ -45,7 +44,6 @@ export default function LoginScreen() {
           </Text>
         </Pressable>
 
-        {/* CREATE ACCOUNT */}
         <Pressable
           style={({ pressed }) => [
             styles.secondaryButton,
@@ -79,7 +77,7 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    fontSize: 38,
+    fontSize: 36,
     fontWeight: '800',
     letterSpacing: 4,
     color: '#3F6B57',
@@ -90,8 +88,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700',
     color: '#26352D',
-    marginBottom: 14,
     textAlign: 'center',
+    marginBottom: 14,
   },
 
   subtitle: {
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: '#65736B',
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 35,
   },
 
   primaryButton: {
@@ -121,7 +119,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 17,
     borderRadius: 14,
-    borderWidth: 2,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
     borderColor: '#3F6B57',
     alignItems: 'center',
   },

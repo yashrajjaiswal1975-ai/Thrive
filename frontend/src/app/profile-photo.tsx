@@ -43,7 +43,7 @@ export default function ProfilePhotoScreen() {
     }
   };
 
-  const continueToApp = () => {
+  const continueToPassword = () => {
     if (!imageUri) {
       Alert.alert(
         'Photo required',
@@ -52,17 +52,15 @@ export default function ProfilePhotoScreen() {
       return;
     }
 
-    console.log('Signup data:', {
-      username,
-      name,
-      age,
-      photoUri: imageUri,
+    router.push({
+      pathname: '/password',
+      params: {
+        username: username ?? '',
+        name: name ?? '',
+        age: age ?? '',
+        photoUri: imageUri,
+      },
     });
-
-
-  router.replace('/');
-
-    // Supabase upload will be added in the next step.
   };
 
   return (
@@ -108,7 +106,7 @@ export default function ProfilePhotoScreen() {
               styles.continueButton,
               pressed && styles.pressed,
             ]}
-            onPress={continueToApp}
+            onPress={continueToPassword}
           >
             <Text style={styles.continueButtonText}>
               Continue
